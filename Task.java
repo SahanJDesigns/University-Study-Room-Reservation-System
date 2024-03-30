@@ -1,6 +1,6 @@
 public class Task extends Thread{
-    private int roomNumber;
-    private int taskID;
+    private final int roomNumber;
+    private final int taskID;
 
     public int getTaskID() {
         return taskID;

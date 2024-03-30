@@ -2,11 +2,11 @@ import java.util.ArrayList;
 import java.util.Random;
 
 class StudyRoomReservationSystem{
-    private ArrayList<StudyRoom> ERC = new ArrayList<StudyRoom>(); //Education resource center
+    private final ArrayList<StudyRoom> ERC = new ArrayList<>(); //Education resource center
     public int taskCount = 0;
 
     //Function to reserve a study room
-    public synchronized StudyRoom reserveStudyRoom(int roomNumber) throws StudyRoomUnavailableException {
+    public synchronized void reserveStudyRoom(int roomNumber) throws StudyRoomUnavailableException {
         taskCount++;
         StudyRoom studyRoom = null;
         for (StudyRoom room : ERC) {
@@ -19,7 +19,6 @@ class StudyRoomReservationSystem{
             throw new StudyRoomUnavailableException();
         }
         System.out.println("successfully reserved room "+ roomNumber );
-        return studyRoom;
     }
     //Function for release a study room
     public synchronized void releaseStudyRoom(int roomNumber) {
@@ -39,7 +38,7 @@ class StudyRoomReservationSystem{
         }
     }
 
-    public static void main(String arg[]){
+    public static void main(String[] arg){
         StudyRoomReservationSystem studyRoomReservationSystem = new StudyRoomReservationSystem();
         //Adding study rooms to education resource center
         for(int i=1;i<11;i++){
@@ -68,8 +67,8 @@ class StudyRoomReservationSystem{
 }
 class StudyRoom{
     private boolean isAvailable;
-    private int roomNumber;
-    private int capacity;
+    private final int roomNumber;
+    private final int capacity;
 
     public StudyRoom(int roomNumber,int capacity){
         this.roomNumber = roomNumber;
