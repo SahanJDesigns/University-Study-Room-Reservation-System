@@ -1,10 +1,13 @@
 import java.util.ArrayList;
+import java.util.Random;
 
-public class StudyRoomReservationSystem extends Thread {
-    private ArrayList<StudyRoom> ERC; //Education resource center
+class StudyRoomReservationSystem{
+    private ArrayList<StudyRoom> ERC = new ArrayList<StudyRoom>(); //Education resource center
+    public int taskCount = 0;
 
     //Function to reserve a study room
     public synchronized StudyRoom reserveStudyRoom(int roomNumber) throws StudyRoomUnavailableException {
+        taskCount++;
         StudyRoom studyRoom = null;
         for (StudyRoom room : ERC) {
             if (room.getRoomNumber() == roomNumber && room.isAvailable()) {
@@ -15,26 +18,52 @@ public class StudyRoomReservationSystem extends Thread {
         if (studyRoom == null) {
             throw new StudyRoomUnavailableException();
         }
+        System.out.println("successfully reserved room "+ roomNumber );
         return studyRoom;
     }
-
-    public synchronized void (int roomNumber) {
+    //Function for release a study room
+    public synchronized void releaseStudyRoom(int roomNumber) {
+        taskCount++;
         for (StudyRoom room : ERC) {
             if (room.getRoomNumber() == roomNumber) {
                 room.setAvailable(true);
             }
         }
+        System.out.println("successfully release room "+ roomNumber );
     }
-
+    //Function for display the room status
     public void displayStudyRoomStatus() {
-        // Calculate column widths
-        int columnWidths = 2;
-        // Print table
         System.out.println("Room\tCapacity\tAvailability");
         for (StudyRoom room : ERC) {
-            System.out.print(room.getRoomNumber() + "\t" + room.getCapacity() + "\t" + room.isAvailable());
+            System.out.println(room.getRoomNumber() + "\t\t\t" + room.getCapacity() + "\t\t\t" + room.isAvailable());
         }
-        System.out.println();
+    }
+
+    public static void main(String arg[]){
+        StudyRoomReservationSystem studyRoomReservationSystem = new StudyRoomReservationSystem();
+        //Adding study rooms to education resource center
+        for(int i=1;i<11;i++){
+            studyRoomReservationSystem.ERC.add(new StudyRoom(i,50));
+        }
+        for(int i=0;i<1000;i++) {
+            Random random = new Random();
+            int roomNum = random.nextInt(10) + 1;
+            Thread branch = new Task(roomNum,i) {
+
+
+                public void run() {
+                    try {
+                        studyRoomReservationSystem.reserveStudyRoom(roomNum);
+                    } catch (StudyRoomUnavailableException e) {
+                            System.err.println(e.getMessage()+"by branch "+getTaskID()+"during access to room "+getRoomNumber());
+                    }
+                    studyRoomReservationSystem.releaseStudyRoom(roomNum);
+                }
+            };
+            branch.start();
+        }
+        studyRoomReservationSystem.displayStudyRoomStatus();
+        System.out.println("Task Count: "+studyRoomReservationSystem.taskCount);
     }
 }
 class StudyRoom{
