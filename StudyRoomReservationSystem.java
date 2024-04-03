@@ -54,7 +54,7 @@ class StudyRoomReservationSystem{
                     try {
                         studyRoomReservationSystem.reserveStudyRoom(roomNum);
                     } catch (StudyRoomUnavailableException e) {
-                            System.err.println(e.getMessage()+"by branch "+getTaskID()+"during access to room "+getRoomNumber());
+                            System.err.println(e.getMessage()+" by branch "+getTaskID()+" during access to room "+getRoomNumber());
                     }
                     studyRoomReservationSystem.releaseStudyRoom(roomNum);
                 }
